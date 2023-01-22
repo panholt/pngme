@@ -61,7 +61,7 @@ impl FromStr for ChunkType{
         let array = bytes.try_into();
         match array{
             Ok(array) => return Ok(ChunkType{value: array}),
-            Err(_) => return Err("Failed to convert")?
+            Err(_) => return Err("Failed to convert vector into array")?
         }
     }
 }
