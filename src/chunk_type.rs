@@ -9,7 +9,7 @@ pub struct ChunkType {
 
 impl ChunkType{
 
-    fn bytes(&self) -> [u8; 4] {
+    pub fn bytes(&self) -> [u8; 4] {
         self.value
     }
 
