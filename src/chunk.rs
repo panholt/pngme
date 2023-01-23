@@ -31,7 +31,7 @@ impl Chunk {
         let crc = Crc::<u32>::new(&CRC_32_ISO_HDLC);
         let mut digest = crc.digest();
         digest.update(&self.chunk_type.bytes());
-        digest.update(&self.data());
+        digest.update(&self.data_as_bytes());
         digest.finalize()
     }
 
