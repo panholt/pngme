@@ -11,15 +11,15 @@ pub struct Chunk {
 
 impl Chunk {
 
-    fn new(chunk_type: ChunkType, data: Vec<u8>) -> Chunk {
+    pub fn new(chunk_type: ChunkType, data: Vec<u8>) -> Chunk {
         Chunk{ chunk_type, data}
     }
 
-    fn length(&self) -> u32 {
+    pub fn length(&self) -> u32 {
         self.data.len() as u32
     }
 
-    fn chunk_type(&self) -> &ChunkType {
+    pub fn chunk_type(&self) -> &ChunkType {
         &self.chunk_type
     }
 
@@ -35,13 +35,30 @@ impl Chunk {
         digest.finalize()
     }
 
-    fn data_as_string(&self) -> Result<String> {
+    pub fn data_as_string(&self) -> Result<String> {
         let result = from_utf8(self.data())?;
         Ok(result.to_string())
     }
 
-    fn data_as_bytes(&self) -> Vec<u8> {
+    pub fn data_as_bytes(&self) -> Vec<u8> {
         self.data.clone()
+    }
+
+    pub fn as_bytes(&self) -> Vec<u8> {
+        let mut result: Vec<u8> = Vec::new();
+        for byte in self.length().to_be_bytes() {
+            result.push(byte)
+        };
+        for byte in self.chunk_type.bytes() {
+            result.push(byte)
+        };
+        for byte in self.data_as_bytes() {
+            result.push(byte)
+        };
+        for byte in self.crc().to_be_bytes() {
+            result.push(byte)
+        };
+        result
     }
 }
 
@@ -50,8 +67,8 @@ impl TryFrom<&[u8]> for Chunk{
     type Error = Error;
 
     fn try_from(value: &[u8]) -> Result<Self> {
-        if value.len() < 16 {
-            Err("Less than 16 bytes received")?
+        if value.len() < 12 {
+            Err("Less than 12 bytes received")?
         }
         let chunk_type_str = from_utf8(&value[4..8])?;
         let chunk_type = ChunkType::from_str(chunk_type_str)?;
