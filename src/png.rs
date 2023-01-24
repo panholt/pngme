@@ -79,14 +79,12 @@ impl TryFrom<&[u8]> for Png {
             match Chunk::try_from(buffer) {
                 Ok(chunk) => {
                     chunks.push(chunk);
-                    print!("Added chunk!");
                     last_match = index;
                 },
                 Err(_) => ()
             }
             index += 1;
         }
-        println!("Collected {} chunks!", chunks.len());
         Ok(Png { chunks })
     }
 }
