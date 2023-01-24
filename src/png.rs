@@ -19,12 +19,13 @@ impl Png {
     }
 
     fn remove_chunk(&mut self, chunk_type: &str) -> Result<Chunk> {
-        match self.chunks
-            .iter()
-            .position(|x| x.chunk_type().to_string() == chunk_type){
-                Some(index) => return Ok(self.chunks.remove(index)),
-                None => return Err("Could not find matching chunk")?
-            }
+        if let Some(index) = self.chunks
+                    .iter()
+                    .position(|x| x.chunk_type().to_string() == chunk_type) {
+            return Ok(self.chunks.remove(index))
+        } else {
+            return Err("Could not find matching chunk")?
+        }
     }
 
     fn header(&self) -> &[u8; 8] {
@@ -76,12 +77,9 @@ impl TryFrom<&[u8]> for Png {
         let mut index = header_len + 1;
         while index < value.len() + 1 {
             let buffer = &value[last_match..index];
-            match Chunk::try_from(buffer) {
-                Ok(chunk) => {
-                    chunks.push(chunk);
-                    last_match = index;
-                },
-                Err(_) => ()
+            if let Ok(chunk) = Chunk::try_from(buffer) {
+                chunks.push(chunk);
+                last_match = index;
             }
             index += 1;
         }
