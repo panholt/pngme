@@ -59,9 +59,10 @@ impl FromStr for ChunkType{
             }
         };
         let array = bytes.try_into();
-        match array{
-            Ok(array) => return Ok(ChunkType{value: array}),
-            Err(_) => return Err("Failed to convert vector into array")?
+        if let Ok(array) = array {
+            return Ok(ChunkType{value: array})
+        } else {
+            return Err("Failed to convert vector into array")?
         }
     }
 }
@@ -70,9 +71,10 @@ impl Display for ChunkType{
 
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let result = from_utf8(&self.value[..]);
-        match result {
-            Ok(result) => write!(f, "{}", result),
-            Err(_) => write!(f, "Failed to convert into UTF-8")
+        if let Ok(result) = result {
+            write!(f, "{}", result)
+        } else {
+            write!(f, "Failed to convert into UTF-8")
         }
     }
 }
