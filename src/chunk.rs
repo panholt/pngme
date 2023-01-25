@@ -75,7 +75,7 @@ impl TryFrom<&[u8]> for Chunk{
         let chunk_data = &value[8..(value.len() -4)];
         let crc_bytes = &value[(value.len() -4)..];
         let crc = u32::from_be_bytes(crc_bytes.try_into()?);
-        let result = Chunk{chunk_type: chunk_type, data: chunk_data.into()};
+        let result = Chunk{chunk_type, data: chunk_data.into()};
         if crc != result.crc(){
             Err("CRC Mismatch")?
         };

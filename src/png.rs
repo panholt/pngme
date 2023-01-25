@@ -22,9 +22,9 @@ impl Png {
         if let Some(index) = self.chunks
                     .iter()
                     .position(|x| x.chunk_type().to_string() == chunk_type) {
-            return Ok(self.chunks.remove(index))
+            Ok(self.chunks.remove(index))
         } else {
-            return Err("Could not find matching chunk")?
+            Err("Could not find matching chunk")?
         }
     }
 
@@ -46,7 +46,7 @@ impl Png {
     }
 
     pub fn as_bytes(&self) -> Vec<u8> {
-        self.header().clone().into_iter()
+        (*self.header()).into_iter()
         .chain(
         self.chunks.iter().flat_map(|x| x.as_bytes())
         )
@@ -83,7 +83,7 @@ impl TryFrom<&[u8]> for Png {
             }
             index += 1;
         }
-        Ok(Png { chunks })
+        Ok(Png::from_chunks(chunks))
     }
 }
 

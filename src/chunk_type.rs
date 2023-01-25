@@ -14,7 +14,7 @@ impl ChunkType{
     }
 
     fn is_valid(&self) -> bool {
-        self.value[2].is_ascii_uppercase()
+        self.is_reserved_bit_valid()
     }
 
     fn is_critical(&self) -> bool {
@@ -60,9 +60,9 @@ impl FromStr for ChunkType{
         };
         let array = bytes.try_into();
         if let Ok(array) = array {
-            return Ok(ChunkType{value: array})
+            Ok(ChunkType{value: array})
         } else {
-            return Err("Failed to convert vector into array")?
+            Err("Failed to convert vector into array")?
         }
     }
 }
